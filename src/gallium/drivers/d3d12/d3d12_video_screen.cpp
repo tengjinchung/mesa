@@ -400,8 +400,10 @@ d3d12_video_encode_max_supported_slices(const D3D12_VIDEO_ENCODER_CODEC &argTarg
    D3D12_VIDEO_ENCODER_LEVELS_H264 h264lvl = {};
    D3D12_VIDEO_ENCODER_SEQUENCE_GOP_STRUCTURE_H264 h264Gop = { 1, 0, 0, 0, 0 };
    D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_H264 h264Config = {};
-   D3D12_VIDEO_ENCODER_PROFILE_HEVC hevcprof = D3D12_VIDEO_ENCODER_PROFILE_HEVC_MAIN;
-   D3D12_VIDEO_ENCODER_LEVEL_TIER_CONSTRAINTS_HEVC hevcLvl = { D3D12_VIDEO_ENCODER_LEVELS_HEVC_62, D3D12_VIDEO_ENCODER_TIER_HEVC_HIGH };
+   //D3D12_VIDEO_ENCODER_PROFILE_HEVC hevcprof = D3D12_VIDEO_ENCODER_PROFILE_HEVC_MAIN;
+   //D3D12_VIDEO_ENCODER_LEVEL_TIER_CONSTRAINTS_HEVC hevcLvl = { D3D12_VIDEO_ENCODER_LEVELS_HEVC_62, D3D12_VIDEO_ENCODER_TIER_HEVC_HIGH };
+   D3D12_VIDEO_ENCODER_PROFILE_HEVC hevcprof = {};
+   D3D12_VIDEO_ENCODER_LEVEL_TIER_CONSTRAINTS_HEVC hevcLvl = {};
    D3D12_VIDEO_ENCODER_SEQUENCE_GOP_STRUCTURE_HEVC hevcGop = { 1, 0, 0 };
    D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_HEVC hevcConfig = {};
    switch (argTargetCodec) {
@@ -421,9 +423,12 @@ d3d12_video_encode_max_supported_slices(const D3D12_VIDEO_ENCODER_CODEC &argTarg
       case D3D12_VIDEO_ENCODER_CODEC_HEVC:
       {
          /* Only read from codecSupport.pHEVCSupport in this case (union of pointers definition) */
+         codecSupport.pHEVCSupport->max_transform_hierarchy_depth_inter = 2;
+         codecSupport.pHEVCSupport->max_transform_hierarchy_depth_intra = 2;
+         codecSupport.pHEVCSupport->MaxLumaCodingUnitSize = D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_HEVC_CUSIZE_64x64;
          assert(codecSupport.pHEVCSupport);
          hevcConfig = {
-            D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_HEVC_FLAG_NONE,
+            D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_HEVC_FLAG_NONE | D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_HEVC_FLAG_USE_ASYMETRIC_MOTION_PARTITION,
             codecSupport.pHEVCSupport->MinLumaCodingUnitSize,
             codecSupport.pHEVCSupport->MaxLumaCodingUnitSize,
             codecSupport.pHEVCSupport->MinLumaTransformUnitSize,
