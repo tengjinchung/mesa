@@ -141,6 +141,7 @@ d3d12_video_decoder_prepare_dxva_slices_control_hevc(struct d3d12_video_decoder 
    vecOutSliceControlBuffers.resize(TotalSlicesDXVAArrayByteSize);
 
    uint8_t* pData = vecOutSliceControlBuffers.data();
+   static uint8_t const start_code[] = { 0, 0, 1 };
    for (uint32_t sliceIdx = 0; sliceIdx < picture_hevc->slice_parameter.slice_count; sliceIdx++)
    {
       DXVA_Slice_HEVC_Short currentSliceEntry = {};
@@ -175,7 +176,7 @@ d3d12_video_decoder_prepare_dxva_slices_control_hevc(struct d3d12_video_decoder 
          } break;
       }
 
-      currentSliceEntry.SliceBytesInBuffer = picture_hevc->slice_parameter.slice_data_size[sliceIdx];
+      currentSliceEntry.SliceBytesInBuffer = picture_hevc->slice_parameter.slice_data_size[sliceIdx] + sizeof(start_code);
       currentSliceEntry.BSNALunitDataLocation = picture_hevc->slice_parameter.slice_data_offset[sliceIdx];
 
       debug_printf("[d3d12_video_decoder_hevc] Detected slice index %" PRIu32 " with SliceBytesInBuffer %d - BSNALunitDataLocation %d - wBadSliceChopping: %" PRIu16
