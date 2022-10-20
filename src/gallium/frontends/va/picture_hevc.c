@@ -226,7 +226,6 @@ void vlVaHandleIQMatrixBufferHEVC(vlVaContext *context, vlVaBuffer *buf)
 void vlVaHandleSliceParameterBufferHEVC(vlVaContext *context, vlVaBuffer *buf)
 {
    VASliceParameterBufferHEVC *h265 = buf->data;
-   static uint8_t const start_code[] = { 0, 0, 1 };
 
    assert(buf->size >= sizeof(VASliceParameterBufferHEVC) && buf->num_elements == 1);
    for (int i = 0 ; i < 2 ; i++) {
@@ -239,7 +238,7 @@ void vlVaHandleSliceParameterBufferHEVC(vlVaContext *context, vlVaBuffer *buf)
    assert(context->desc.h265.slice_parameter.slice_count < max_pipe_hevc_slices);
 
    context->desc.h265.slice_parameter.slice_info_present = true;
-   context->desc.h265.slice_parameter.slice_data_size[context->desc.h265.slice_parameter.slice_count] = h265->slice_data_size + sizeof(start_code);
+   context->desc.h265.slice_parameter.slice_data_size[context->desc.h265.slice_parameter.slice_count] = h265->slice_data_size;
    context->desc.h265.slice_parameter.slice_data_offset[context->desc.h265.slice_parameter.slice_count] = h265->slice_data_offset;
 
    switch (h265->slice_data_flag) {
